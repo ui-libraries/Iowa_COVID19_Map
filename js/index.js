@@ -21,6 +21,11 @@ d3.queue()
 //provide instructions for drawing the map
 function drawMap(err, corona) {
 
+  //get the total case count for Iowa
+  var caseTotal = ss.sum(corona.features.map(function(feature) {
+    return feature.properties['Confirmed'];
+  }));
+
   // Group totals of confirmed cases into 5 ckmeans categories
   var caseStops = ss.ckmeans(corona.features.map(function(feature) {
     return feature.properties['Confirmed'];
@@ -35,6 +40,13 @@ function drawMap(err, corona) {
       d >= ss.min(caseStops[0]) ? '#eff3ff' :
       'rgba(0,0,0,0.0)';
   };
+
+  //get the total death count for Iowa
+  var deathTotal = ss.sum(corona.features.map(function(feature) {
+    return feature.properties['Deaths'];
+  }));
+
+  console.log(deathTotal);
 
   // Group totals of deaths into 5 ckmeans categories
   var deathStops = ss.ckmeans(corona.features.map(function(feature) {
@@ -69,8 +81,13 @@ function drawMap(err, corona) {
     //restyle on mouseover, reset style on mouseout
     onEachFeature: function(feature, layer) {
 
+      console.log(feature.properties);
+
       // bind a popup window
-      layer.bindPopup('<h4><b>' + feature.properties.Name + ' County</b><br><br>Confirmed Cases: ' + feature.properties.Confirmed +
+      layer.bindPopup('<h4><b>' + feature.properties.Name + ' County' +
+        '<br>' + 'Population: ' + feature.properties.pop_est_2018 + '</b>' +
+        '<br><br>Confirmed Cases: ' + feature.properties.Confirmed +
+        '<br>Statewide Total: ' + caseTotal +
         '<br>Last Updated: ' + feature.properties.last_updated.substring(0, feature.properties.last_updated.length - 8) +
         '</h4>', {
           maxHeight: 300,
@@ -114,7 +131,10 @@ function drawMap(err, corona) {
     onEachFeature: function(feature, layer) {
 
       // bind a popup window
-      layer.bindPopup('<h4><b>' + feature.properties.Name + ' County</b><br><br>Deaths: ' + feature.properties.Deaths +
+      layer.bindPopup('<h4><b>' + feature.properties.Name + ' County' +
+        '<br>' + 'Population: ' + feature.properties.pop_est_2018 + '</b>' +
+        '<br><br>Deaths: ' + feature.properties.Deaths +
+        '<br>Statewide Total: ' + deathTotal +
         '<br>Last Updated: ' + feature.properties.last_updated.substring(0, feature.properties.last_updated.length - 8) +
         '</h4>', {
           maxHeight: 300,
@@ -224,5 +244,5 @@ function drawMap(err, corona) {
 
   //fit the map to the extent of the county layer upon drawing
   map.fitBounds(cases.getBounds());
-  
+
 }; //end drawMap function
