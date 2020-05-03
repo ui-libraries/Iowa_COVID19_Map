@@ -183,7 +183,7 @@ function drawMap(err, corona) {
     // loop through our density intervals and generate a label with a colored square for each interval
     for (var i = 0; i < grades.length; i++) {
       div.innerHTML +=
-        labels.push('<i style="background:' + getCaseColor(grades[i] + 1) + '"></i> ' +
+        labels.push('<i style="background:' + getCaseColor(grades[i]) + '"></i> ' +
           grades[i] + (grades[i + 1] ? '&ndash;' + (grades[i + 1] - 1) : '+'));
     }
     div.innerHTML = labels.join('<br>');
@@ -200,7 +200,7 @@ function drawMap(err, corona) {
     // loop through our density intervals and generate a label with a colored square for each interval
     for (var i = 0; i < grades.length; i++) {
       div.innerHTML +=
-        labels.push('<i style="background:' + getDeathColor(grades[i] + 1) + '"></i> ' +
+        labels.push('<i style="background:' + getDeathColor(grades[i]) + '"></i> ' +
           grades[i] + (grades[i + 1] ? '&ndash;' + (grades[i + 1] - 1) : '+'));
     }
     div.innerHTML = labels.join('<br>');
