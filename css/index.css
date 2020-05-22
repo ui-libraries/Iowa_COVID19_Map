@@ -39,6 +39,19 @@ h2 {
   font-family: "Montserrat";
 }
 
+h3 {
+  font-size: 0.9em;
+  /* font-size: 50vw; */
+  color: black;
+  display: inline-block;
+  margin-top: 0.3em;
+  margin-bottom: 0.0em;
+  margin-left: 0.1em;
+  margin-right: 0;
+  font-weight: normal;
+  font-family: "Montserrat";
+}
+
 h4 {
   padding: 5px;
   font-size: 13px;
@@ -46,17 +59,29 @@ h4 {
   font-family: "Montserrat";
 }
 
+
 /* Set map parameters */
 #map {
   position: fixed;
   bottom: 0px;
   width: 100%;
-  top: 52px;
+  top: 0px;
 }
 
-.easy-button-button {
-  display: inline-block !important;
-}
+#graphic {
+   background-color: #fff;
+   opacity: 0.85;
+   border-radius: 3px;
+   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.10);
+   font: 12px/20px 'Rubik', 'Rubik', 'Rubik', sans-serif;
+   position: fixed;
+   line-height: 18px;
+   color: #555;
+   bottom: 10px;
+   padding: 10px;
+   left: 50px;
+   top: 10px;
+ }
 
 .legend {
   background-color: #fff;

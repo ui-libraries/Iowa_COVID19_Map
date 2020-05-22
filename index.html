@@ -13,10 +13,6 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.css">
 
-  <!-- for info button -->
-  <link rel='stylesheet' href='https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css'>
-  <link rel="stylesheet" href="css/easy-button.css">
-
   <!-- rest of css -->
   <link rel="stylesheet" href="css/index.css">
 
@@ -24,23 +20,7 @@
 
 <body>
 
-  <header>
-    <h1>The COVID-19 Outbreak in Iowa</h1><br>
-    <h2>Digital Scholarship & Publishing Studio, University of Iowa Libraries</h2>
-  </header>
-
-
-  <!-- the map will go inside this div below -->
-  <div id="map"></div>
-
-  <!-- button-dependent info window -->
-  <div id="dialog" title="COVID-19 in Iowa">
-    <h4>This is a self-updating map of confirmed cases and deaths due to COVID-19 in Iowa. Please click on the counties for more information. This data can be found at the
-      <a href="https://open-iowa.opendata.arcgis.com/datasets/ia-covid19-cases" style='color: blue;' target="_blank">State of Iowa Open Spatial Data</a>
-      page as well as the <a href="https://geo.btaa.org/catalog/6a84756c2e444a87828bb7ce699fdac6_0" style='color: blue;' target="_blank">BTAA Geoportal</a>.
-    </h4>
-  </div>
-  <!-- end button-dependent info window -->
+  <div id="map"></div><div id="graphic"></div>
 
   <!-- link to the js files -->
   <script src="https://code.jquery.com/jquery-3.2.0.min.js"></script>
@@ -52,8 +32,10 @@
 
   <!-- for button-dependent map information window -->
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-  <script src="js/easy-button.js"></script>
+
+  <script src="js/colors.js"></script>
   <script src="js/index.js"></script>
+  <script src="js/chart.js"></script>
 
 </body>
 
