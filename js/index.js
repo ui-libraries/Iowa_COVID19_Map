@@ -21,15 +21,20 @@ d3.queue()
 // Provide instructions for drawing the map
 function drawMap(err, corona) {
 
-  // Get the total case count for Iowa
-  var caseTotal = ss.sum(corona.features.map(function(feature) {
+  // Return all of the case numbers
+  var caseArrayPrelim = corona.features.map(function(feature) {
     return feature.properties['Confirmed'];
-  }));
+  });
+
+  // Remove the last value in the array, because these are pending investigation and not yet assigned to any county
+  // CHECK YOUR DATA TO SEE IF IT IS INCLUDING ANY DATA NOT ASSIGNED TO A COUNTY
+  var caseArray = caseArrayPrelim.slice(0,-1);
+
+  // Get the total confirmed case count for Iowa
+  var caseTotal = ss.sum(caseArray);
 
   // Group totals of confirmed cases into 5 ckmeans categories
-  var caseStops = ss.ckmeans(corona.features.map(function(feature) {
-    return feature.properties['Confirmed'];
-  }), 5);
+  var caseStops = ss.ckmeans(caseArray, 5);
 
   // Add a function to style the counties by their confirmed cases (ck means)
   function getCaseColor(d) {
@@ -41,15 +46,19 @@ function drawMap(err, corona) {
       'rgba(0,0,0,0.0)';
   };
 
-  // Get the total death count for Iowa
-  var deathTotal = ss.sum(corona.features.map(function(feature) {
+  // Return all of the death numbers
+  var deathArrayPrelim = corona.features.map(function(feature) {
     return feature.properties['Deaths'];
-  }));
+  });
 
-  // Group totals of deaths into 5 ckmeans categories
-  var deathStops = ss.ckmeans(corona.features.map(function(feature) {
-    return feature.properties['Deaths'];
-  }), 5);
+  // Remove the last value in the array, because these are pending investigation and not yet assigned to any county
+  var deathArray = deathArrayPrelim.slice(0,-1)
+
+  // Get the total confirmed death count for Iowa
+  var deathTotal = ss.sum(deathArray);
+
+  // Group totals of confirmed deaths into 5 ckmeans categories
+  var deathStops = ss.ckmeans(deathArray, 5);
 
   // Add a function to style the counties by their confirmed deaths (ck means)
   function getDeathColor(d) {
@@ -89,7 +98,7 @@ function drawMap(err, corona) {
     return (((feature.properties.Deaths/feature.properties.pop_est_2018)*1000).toFixed(2));
   });
 
-  // Remove the last entry in the array as this refers to cases pending investigation, not cases for a particular county
+  // Remove the last entry in the array as this refers to deaths pending investigation, not cases for a particular county
   var normDeathArray = normDeathArrayPrelim.slice(0,-1);
 
   // Group the death count per 1,000 people per county into 5 ckmeans categories
@@ -205,12 +214,15 @@ function drawMap(err, corona) {
 
     style: function(feature) {
 
+      var colorProps = (feature.properties.Confirmed/feature.properties.pop_est_2018)*1000;
+
       return {
         stroke: 1,
         color: "grey",
         weight: 1,
-        // Use parseFloat because one result is not a number, due to the inclusion of cases pending investigation not assigned to any county
-        fillColor: getNormCaseColor(parseFloat(((feature.properties.Confirmed/feature.properties.pop_est_2018)*1000).toFixed(2))),
+        // Use parseFloat because one result is not a number, due to the
+        // inclusion of cases pending investigation not assigned to any county
+        fillColor: getNormCaseColor(parseFloat((colorProps).toFixed(2))),
         fillOpacity: 0.5
       };
     },
@@ -219,11 +231,12 @@ function drawMap(err, corona) {
     onEachFeature: function(feature, layer) {
 
       var props = feature.properties;
+      var colorProps = (props.Confirmed/props.pop_est_2018)*1000;
 
       // bind a popup window
       layer.bindPopup('<h4><b>' + props.Name + ' County' +
         '<br>' + 'Population: ' + props.pop_est_2018 + '</b>' +
-        '<br><br>Cases per 1,000: ' + (((props.Confirmed/props.pop_est_2018)*1000).toFixed(2)) +
+        '<br><br>Cases per 1,000: ' + ((colorProps).toFixed(2)) +
         '<br>Last Updated: ' + props.last_updated.substring(0, props.last_updated.length - 8) +
         '</h4>', {
           maxHeight: 300,
@@ -246,8 +259,9 @@ function drawMap(err, corona) {
           stroke: 1,
           color: "grey",
           weight: 1,
-          // Use parseFloat because one result is not a number, due to the inclusion of cases pending investigation not assigned to any county
-          fillColor: getNormCaseColor(parseFloat(((feature.properties.Confirmed/feature.properties.pop_est_2018)*1000).toFixed(2))),
+          // Use parseFloat because one result is not a number, due to the
+          // inclusion of cases pending investigation not assigned to any county
+          fillColor: getNormCaseColor(parseFloat((colorProps).toFixed(2))),
           fillOpacity: 0.5
         });
       });
@@ -259,13 +273,15 @@ function drawMap(err, corona) {
 
     style: function(feature) {
 
-      var props = feature.properties;
+      var colorProps = (feature.properties.Deaths/feature.properties.pop_est_2018)*1000;
 
       return {
         stroke: 1,
         color: "grey",
         weight: 1,
-        fillColor: getNormDeathColor(((props.Deaths/props.pop_est_2018)*1000).toFixed(2)),
+        // Use parseFloat because one result is not a number, due to the
+        // inclusion of deaths pending investigation not assigned to any county
+        fillColor: getNormDeathColor(parseFloat((colorProps).toFixed(2))),
         fillOpacity: 0.5
       };
     },
@@ -274,11 +290,12 @@ function drawMap(err, corona) {
     onEachFeature: function(feature, layer) {
 
       var props = feature.properties;
+      var colorProps = (props.Deaths/props.pop_est_2018)*1000;
 
       // bind a popup window
       layer.bindPopup('<h4><b>' + props.Name + ' County' +
         '<br>' + 'Population: ' + props.pop_est_2018 + '</b>' +
-        '<br><br>Deaths per 1,000: ' + (((props.Deaths/props.pop_est_2018)*1000).toFixed(2)) +
+        '<br><br>Deaths per 1,000: ' + ((colorProps).toFixed(2)) +
         '<br>Last Updated: ' + props.last_updated.substring(0, props.last_updated.length - 8) +
         '</h4>', {
           maxHeight: 300,
@@ -301,7 +318,9 @@ function drawMap(err, corona) {
           stroke: 1,
           color: "grey",
           weight: 1,
-          fillColor: getNormDeathColor(((props.Deaths/props.pop_est_2018)*1000).toFixed(2)),
+          // Use parseFloat because one result is not a number, due to the
+          // inclusion of deaths pending investigation not assigned to any county
+          fillColor: getNormDeathColor(parseFloat((colorProps).toFixed(2))),
           fillOpacity: 0.5
         });
       });
@@ -397,7 +416,8 @@ function drawMap(err, corona) {
     // loop through our intervals and generate a label with a colored square for each interval
     for (var i = 0; i < grades.length; i++) {
       div.innerHTML +=
-        // Use parseFloat because one result is not a number, due to the inclusion of cases pending investigation not assigned to any county
+        // Use parseFloat because one result is not a number, due to the
+        // inclusion of cases pending investigation not assigned to any county
         labels.push('<i style="background:' + getNormCaseColor(parseFloat(grades[i])) + '"></i> ' +
           grades[i] + (grades[i + 1] ? '&ndash;' + (grades[i + 1] - 0.01).toFixed(2) : '+'));
     }
@@ -415,7 +435,9 @@ function drawMap(err, corona) {
     // loop through our intervals and generate a label with a colored square for each interval
     for (var i = 0; i < grades.length; i++) {
       div.innerHTML +=
-        labels.push('<i style="background:' + getNormDeathColor(grades[i]) + '"></i> ' +
+        // Use parseFloat because one result is not a number, due to the
+        // inclusion of deaths pending investigation not assigned to any county
+        labels.push('<i style="background:' + getNormDeathColor(parseFloat(grades[i])) + '"></i> ' +
           grades[i] + (grades[i + 1] ? '&ndash;' + (grades[i + 1] - 0.01).toFixed(2) : '+'));
     }
     div.innerHTML = labels.join('<br>');
