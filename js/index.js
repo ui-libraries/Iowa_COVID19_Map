@@ -22,13 +22,13 @@ d3.queue()
 function drawMap(err, corona) {
 
   // Return all of the case numbers
-  var caseArrayPrelim = corona.features.map(function(feature) {
+  var caseArray = corona.features.map(function(feature) {
     return feature.properties['Confirmed'];
   });
 
-  // Remove the last value in the array, because these are pending investigation and not yet assigned to any county
+  // Remove the second-to-last value in the array, because these are pending investigation and not yet assigned to any county
   // CHECK YOUR DATA TO SEE IF IT IS INCLUDING ANY DATA NOT ASSIGNED TO A COUNTY
-  var caseArray = caseArrayPrelim.slice(0,-1);
+  caseArray.splice(caseArray.length - 2, 1);
 
   // Get the total confirmed case count for Iowa
   var caseTotal = ss.sum(caseArray);
@@ -47,12 +47,12 @@ function drawMap(err, corona) {
   };
 
   // Return all of the death numbers
-  var deathArrayPrelim = corona.features.map(function(feature) {
+  var deathArray = corona.features.map(function(feature) {
     return feature.properties['Deaths'];
   });
 
-  // Remove the last value in the array, because these are pending investigation and not yet assigned to any county
-  var deathArray = deathArrayPrelim.slice(0,-1)
+  // Remove the second-to-last value in the array, because these are pending investigation and not yet assigned to any county
+  deathArray.splice(deathArray.length - 2, 1);
 
   // Get the total confirmed death count for Iowa
   var deathTotal = ss.sum(deathArray);
@@ -73,12 +73,12 @@ function drawMap(err, corona) {
   // *** NORMALIZING THE DATA *** //
 
   // Get an array of case counts per 1,000 people per county, rounded to two decimal places
-  var normCaseArrayPrelim = corona.features.map(function(feature) {
+  var normCaseArray = corona.features.map(function(feature) {
     return (((feature.properties.Confirmed/feature.properties.pop_est_2018)*1000).toFixed(2));
   });
 
-  // Remove the last entry in the array as this refers to cases pending investigation, not cases for a particular county
-  var normCaseArray = normCaseArrayPrelim.slice(0,-1);
+  // Remove the second-to-last entry in the array as this refers to cases pending investigation, not cases for a particular county
+  normCaseArray.splice(normCaseArray.length - 2, 1);
 
   // Group the case count per 1,000 people per county into 5 ckmeans categories
   var normCaseStops = ss.ckmeans(normCaseArray, 5);
@@ -94,12 +94,12 @@ function drawMap(err, corona) {
   };
 
   // Get an array of death counts per 1,000 people per county, rounded to two decimal places
-  var normDeathArrayPrelim = corona.features.map(function(feature) {
+  var normDeathArray = corona.features.map(function(feature) {
     return (((feature.properties.Deaths/feature.properties.pop_est_2018)*1000).toFixed(2));
   });
 
-  // Remove the last entry in the array as this refers to deaths pending investigation, not cases for a particular county
-  var normDeathArray = normDeathArrayPrelim.slice(0,-1);
+  // Remove the second-to-last entry in the array as this refers to deaths pending investigation, not cases for a particular county
+  normDeathArray.splice(normDeathArray.length - 2, 1);
 
   // Group the death count per 1,000 people per county into 5 ckmeans categories
   var normDeathStops = ss.ckmeans(normDeathArray, 5);
